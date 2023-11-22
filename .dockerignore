@@ -1,0 +1,9 @@
+# Ignore readme files
+
+.git/
+.github/
+Dockerfile
+*.Dockerfile
+README.md
+LICENSE
+
