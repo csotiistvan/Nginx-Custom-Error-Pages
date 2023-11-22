@@ -22,6 +22,14 @@ RUN adduser -D static
 # Switch to the scratch image
 FROM scratch
 
+LABEL \
+    # Docs: <https://github.com/opencontainers/image-spec/blob/master/annotations.md>
+    org.opencontainers.image.title="custom-errors" \
+    org.opencontainers.image.description="Static server error pages in the docker image" \
+    org.opencontainers.image.url="https://github.com/csotiistvan/Nginx-Custom-Error-Pages/" \
+    org.opencontainers.image.source="https://github.com/csotiistvan/Nginx-Custom-Error-Pages/" \
+    org.opencontainers.image.vendor="WHO"
+
 EXPOSE 80
 
 # Copy over the user
