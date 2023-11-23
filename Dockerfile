@@ -17,7 +17,7 @@ COPY .config .
 RUN make && make install
 
 # Allow the httpd process to bind to port 8080 without running as root
-RUN setcap 'cap_net_bind_service=+ep' /busybox
+# RUN setcap 'cap_net_bind_service=+ep' /busybox/_install/bin/busybox/
 
 # Create a non-root user to own the files and run our server
 RUN adduser -D static
@@ -40,9 +40,6 @@ COPY --from=builder /etc/passwd /etc/passwd
 
 # Copy the busybox static binary
 COPY --from=builder /busybox/_install/bin/busybox /
-
-# Copy over libcap bin 
-# COPY --from=builder /usr/sbin/libcap* /usr/sbin/
 
 # Use our non-root user
 USER static
