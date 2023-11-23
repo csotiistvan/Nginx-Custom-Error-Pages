@@ -1,7 +1,7 @@
 FROM alpine:3.13.2 AS builder
 
 # Install all dependencies required for compiling busybox
-RUN apk add gcc musl-dev make perl
+RUN apk add gcc musl-dev make perl authbind
 
 # Download busybox sources
 RUN wget https://busybox.net/downloads/busybox-1.35.0.tar.bz2 \
@@ -19,6 +19,10 @@ RUN make && make install
 # Create a non-root user to own the files and run our server
 RUN adduser -D static
 
+# Create a file /etc/authbind/byport/8080 and set its permissions to allow the httpd process to bind to port 8080
+RUN touch /etc/authbind/byport/8080
+RUN chmod 777 /etc/authbind/byport/8080
+
 # Switch to the scratch image
 FROM scratch
 
@@ -30,13 +34,17 @@ LABEL \
     org.opencontainers.image.source="https://github.com/csotiistvan/Nginx-Custom-Error-Pages/" \
     org.opencontainers.image.vendor="WHO"
 
-EXPOSE 9000
+EXPOSE 8080
 
 # Copy over the user
 COPY --from=builder /etc/passwd /etc/passwd
 
 # Copy the busybox static binary
 COPY --from=builder /busybox/_install/bin/busybox /
+
+# Copy over authbind bin and config
+COPY --from=builder /etc/authbind/byport/8080 /etc/authbind/byport/8080
+COPY --from=builder /usr/sbin/authbind /usr/sbin/authbind
 
 # Use our non-root user
 USER static
@@ -53,4 +61,4 @@ COPY httpd.conf .
 COPY . .
 
 # Run busybox httpd
-CMD ["/busybox", "httpd", "-f", "-v", "-p", "9000", "-c", "httpd.conf"]
+CMD ["authbind", "--deep", "/busybox", "httpd", "-f", "-v", "-p", "8080", "-c", "httpd.conf"]
