@@ -17,4 +17,4 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }} # Provide GITHUB_TOKEN to login into the GitHub Packages
           image-name: nginx-custom-error-pages # Provide Docker image name
-          image-tags: 0.1.3
+          image-tag: 0.1.3
